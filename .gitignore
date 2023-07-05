@@ -1,0 +1,29 @@
+# PyCharm
+.idea/
+
+# Virtual Environment
+venv/
+env/
+*.venv/
+*.env/
+
+# Compiled Python files
+*.pyc
+*.pyo
+__pycache__/
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Dependency directories
+env/
+lib/
+lib64/
+bin/
+include/
