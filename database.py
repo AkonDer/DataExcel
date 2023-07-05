@@ -5,6 +5,7 @@ from faker import Faker
 
 DB_URL = 'sqlite:///employees.db'
 
+
 class EmployeeManager:
     def __init__(self):
         self.engine = create_engine(DB_URL)
