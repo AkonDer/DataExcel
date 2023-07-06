@@ -20,7 +20,7 @@ class Employee(Base):
     position = Column(String)
     department = Column(String)
     status = Column(String)
-    here_date = Column(DateTime)
+    here_date = Column(Date)
     history = relationship("EmployeeHistory", backref='employee')
 
 

@@ -1,31 +1,28 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QDesktopWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog
+from PyQt5.uic import loadUi
+import dataprocessing as dp
 
 
-class MainWindow(QMainWindow):
+class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        loadUi('mainwindow.ui', self)
 
-        # Устанавливаем заголовок окна
-        self.setWindowTitle('Пример QMainWindow')
-        # Установка размеров окна
-        self.resize(800, 500)
+        self.pushButton_Load_Excel = self.findChild(QPushButton, 'pushButton_Load_Excel')
 
-        # Получение геометрии доступной области на экране
-        available_geometry = QDesktopWidget().availableGeometry()
+        # Привязка обработчика события к кнопке
+        self.pushButton_Load_Excel.clicked.connect(self.button_clicked)
 
-        # Вычисление координат для центрирования окна
-        x = (available_geometry.width() - self.width()) // 2
-        y = (available_geometry.height() - self.height()) // 2
-
-        # Расположение окна по центру экрана
-        self.move(x, y)
-
+    def button_clicked(self):
+        # Обработчик события нажатия кнопки
+        filename, _ = QFileDialog.getOpenFileName(None, "Open File", "/", "All Files (*)")
+        dp.excel_to_db(filename)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    window = MainWindow()
+    window = MyWindow()
     window.show()
 
     sys.exit(app.exec_())
