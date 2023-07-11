@@ -3,6 +3,7 @@ import numpy as np
 from database import EmployeeManager
 from datetime import datetime
 
+
 def excel_to_db(filename):
     EMPLOYEE_NUMBER = 3
     BIRTH_DATE = 6
@@ -32,6 +33,6 @@ def excel_to_db(filename):
                                 STATUS,
                                 datetime.strptime(row[HERE_DATE], '%d.%m.%Y').date())
 
-        print(index, last_name, first_name, middle_name, row[ADDRESS], row[POSITION], row[DEPORTMENT], STATUS)
+        print(index, last_name, first_name, middle_name, row[POSITION])
 
     manager.close_session()
