@@ -2,7 +2,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Employee, Base
 
-
 DB_URL = 'sqlite:///employees.db'
 
 
@@ -39,18 +38,3 @@ def create_session():
     Session = sessionmaker(bind=engine)
     session = Session()
     return session
-
-
-if __name__ == '__main__':
-    session = create_session()
-    manager = EmployeeManager(session)
-
-    # manager.delete_all_employees()
-
-    employees = manager.get_all_employees()
-    # for employee in employees:
-    #     print(employee.first_name, employee.position, employee.birth_date, employee.department)
-
-    print(employees)
-
-    manager.close_session()

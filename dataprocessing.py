@@ -3,8 +3,6 @@ import numpy as np
 from database import EmployeeManager, create_session
 from datetime import datetime
 
-from time import strftime
-
 
 def excel_to_db(filename):
     EMPLOYEE_NUMBER = 3
