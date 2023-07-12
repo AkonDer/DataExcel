@@ -3,6 +3,8 @@ import numpy as np
 from database import EmployeeManager, create_session
 from datetime import datetime
 
+from time import strftime
+
 
 def excel_to_db(filename):
     EMPLOYEE_NUMBER = 3
@@ -23,16 +25,28 @@ def excel_to_db(filename):
         first_name = row[EMPLOYEE].split(' ')[1].strip()
         middle_name = row[EMPLOYEE].split(' ')[2].strip() if len(row['Сотрудник'].split(' ')) > 2 else np.nan
 
+        try:
+            birth_date = datetime.strptime(row[BIRTH_DATE], '%d.%m.%Y').date()
+        except Exception as e:
+            print(f"Произошла следующая ошибка: {e}")
+            birth_date = row[BIRTH_DATE].date()
+
+        try:
+            here_date = datetime.strptime(row[HERE_DATE], '%d.%m.%Y').date()
+        except Exception as e:
+            print(f"Произошла следующая ошибка: {e}")
+            here_date = row[HERE_DATE].date()
+
         manager.create_employee(row[EMPLOYEE_NUMBER],
                                 last_name,
                                 first_name,
                                 middle_name,
-                                datetime.strptime(row[BIRTH_DATE], '%d.%m.%Y').date(),
+                                birth_date,
                                 row[ADDRESS],
                                 row[POSITION],
                                 row[DEPORTMENT],
                                 STATUS,
-                                datetime.strptime(row[HERE_DATE], '%d.%m.%Y').date())
+                                here_date)
 
         print(index, last_name, first_name, middle_name, row[POSITION])
 
