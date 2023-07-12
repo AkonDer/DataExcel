@@ -37,3 +37,10 @@ def excel_to_db(filename):
         print(index, last_name, first_name, middle_name, row[POSITION])
 
     manager.close_session()
+
+
+def clear_db():
+    session = create_session()
+    manager = EmployeeManager(session)
+    manager.delete_all_employees()
+    manager.close_session()

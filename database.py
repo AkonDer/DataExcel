@@ -45,7 +45,6 @@ if __name__ == '__main__':
     session = create_session()
     manager = EmployeeManager(session)
 
-    # manager.generate_fake_employees(10)
     # manager.delete_all_employees()
 
     employees = manager.get_all_employees()

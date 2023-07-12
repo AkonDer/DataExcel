@@ -32,7 +32,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_cleandb">
+      <widget class="QPushButton" name="pushButton_cleardb">
        <property name="text">
         <string>Очистить базу данных</string>
        </property>
