@@ -2,18 +2,16 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Employee, Base
 
+
 DB_URL = 'sqlite:///employees.db'
 
 
 class EmployeeManager:
-    def __init__(self):
-        self.engine = create_engine(DB_URL)
-        Base.metadata.create_all(bind=self.engine)
-        Session = sessionmaker(bind=self.engine)
-        self.session = Session()
+    def __init__(self, session):
+        self.session = session
 
     def df_to_sql(self, df):
-        df.to_sql('employees', self.engine, index=False, if_exists='append')
+        df.to_sql('employees', self.session.bind, index=False, if_exists='append')
 
     def create_employee(self, employee_number, last_name, first_name, middle_name, birth_date, address, position,
                         department, status, here_date):
@@ -35,8 +33,17 @@ class EmployeeManager:
         self.session.close()
 
 
+def create_session():
+    engine = create_engine(DB_URL)
+    Base.metadata.create_all(bind=engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    return session
+
+
 if __name__ == '__main__':
-    manager = EmployeeManager()
+    session = create_session()
+    manager = EmployeeManager(session)
 
     # manager.generate_fake_employees(10)
     # manager.delete_all_employees()

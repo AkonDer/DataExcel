@@ -27,3 +27,9 @@ lib/
 lib64/
 bin/
 include/
+
+.coverage
+report.html
+htmlcov/
+assets/
+.pytest_cache/

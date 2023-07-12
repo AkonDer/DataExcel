@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from database import EmployeeManager
+from database import EmployeeManager, create_session
 from datetime import datetime
 
 
@@ -15,7 +15,8 @@ def excel_to_db(filename):
     STATUS = 'staff member'
 
     df = pd.read_excel(filename)
-    manager = EmployeeManager()
+    session = create_session()
+    manager = EmployeeManager(session)
 
     for index, row in df.iterrows():
         last_name = row[EMPLOYEE].split(' ')[0].strip()

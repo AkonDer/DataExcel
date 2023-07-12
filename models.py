@@ -1,7 +1,7 @@
 from datetime import datetime
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Date, ForeignKey
-from sqlalchemy.orm import sessionmaker, relationship
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, DateTime, Date, ForeignKey
+from sqlalchemy.orm import relationship
+from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 
@@ -40,4 +40,3 @@ class EmployeeHistory(Base):
     old_address = Column(String)
     new_status = Column(String)
     old_status = Column(String)
-
