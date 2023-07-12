@@ -1,20 +1,23 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog
 from PyQt5 import uic
-import dataprocessing as dp
+from dataprocessing import DataProcessing
+from database import create_session
 from tkinter import messagebox
 
 
 def button_clicked_load_excel():
     filename, _ = QFileDialog.getOpenFileName(None, "Open File", "/", "All Files (*)")
     if filename != '':
-        dp.excel_to_db(filename)
+        data_processing = DataProcessing(create_session())
+        data_processing.excel_to_db(filename)
 
 
 def button_clicked_cleardb():
     answer = messagebox.askyesno("Сообщение", "Вы уверены, что хотите очистить базу?")
     if answer:
-        dp.clear_db()
+        data_processing = DataProcessing(create_session())
+        data_processing.clear_db()
         messagebox.showinfo("Сообщение", "База полностью очищена")
 
 
@@ -38,3 +41,6 @@ if __name__ == '__main__':
     window.show()
 
     sys.exit(app.exec_())
+
+# TODO: Добавить асинхронность
+# TODO: Добавить полосу прогресса
