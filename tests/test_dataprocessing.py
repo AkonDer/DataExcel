@@ -7,7 +7,6 @@ import pandas as pd
 
 sys.path.append('./')
 from models import Employee, Base
-from database import create_session
 from dataprocessing import DataProcessing
 
 DB_URL = 'sqlite:///:memory:'

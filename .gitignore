@@ -16,6 +16,7 @@ __pycache__/
 *.log
 *.sqlite
 *.db
+*.db-journal
 
 # OS generated files
 .DS_Store
