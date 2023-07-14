@@ -1,11 +1,11 @@
 # Импорт необходимых библиотек
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog, QProgressBar
-from PyQt5 import uic
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog, QProgressBar
+from PyQt6 import uic
 from dataprocessing import DataProcessing
 from database import create_session
 from tkinter import messagebox
-from PyQt5.QtCore import QRunnable, pyqtSlot, QThreadPool, pyqtSignal, QObject
+from PyQt6.QtCore import QRunnable, pyqtSlot, QThreadPool, pyqtSignal, QObject
 
 
 # Объект для отправки сигналов из Worker'a
@@ -72,4 +72,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = MyWindow()
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
