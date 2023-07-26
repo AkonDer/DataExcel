@@ -1,5 +1,7 @@
 import os
 import sys
+from datetime import datetime
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -44,7 +46,41 @@ def setup_data():
     os.remove('test_data.xlsx')
 
 
+def fake_progress_callback(progress):
+    # Простая проверка, чтобы удостовериться, что прогресс в допустимом диапазоне
+    assert 0 <= progress <= 100
+
+
 def test_excel_to_db(setup_data, session):
     data_processing = DataProcessing(session)
-    data_processing.excel_to_db('test_data.xlsx')
+    data_processing.excel_to_db('test_data.xlsx', fake_progress_callback)
     assert session.query(Employee).count() == 5
+
+
+def test_clear_db(session):
+    # Инициализируем объект DataProcessing
+    data_processing = DataProcessing(session)
+
+    # Добавляем запись в базу данных
+    employee = Employee(employee_number=126,
+                        last_name="Тестов",
+                        first_name="Тест",
+                        middle_name="Тестович",
+                        birth_date=datetime.strptime("01.01.1990", "%d.%m.%Y").date(),
+                        address="ул. Тестовая, 1",
+                        position="Тестовая должность",
+                        department="Тестовый отдел",
+                        status="staff member",
+                        here_date=datetime.strptime("01.01.2020", "%d.%m.%Y").date())
+
+    session.add(employee)
+    session.commit()
+
+    # Убедимся, что запись добавлена
+    assert session.query(Employee).count() == 1
+
+    # Вызываем метод clear_db
+    data_processing.clear_db()
+
+    # Проверяем, что все записи были удалены из базы данных
+    assert session.query(Employee).count() == 0

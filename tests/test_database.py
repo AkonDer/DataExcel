@@ -22,48 +22,62 @@ def session():
     session.close()
 
 
-def test_df_to_sql(session):
-    manager = EmployeeManager(session)
-    df = pd.DataFrame({'employee_number': [123456], 'last_name': ['Doe'], 'first_name': ['John'], 'middle_name': ['A.'],
-                       'birth_date': ['1980-01-01'], 'address': ['Some Address'], 'position': ['Developer'],
-                       'department': ['IT'], 'status': ['Active'], 'here_date': ['2020-01-01']})
+@pytest.fixture(scope='function')
+def manager(session):
+    return EmployeeManager(session)
+
+
+@pytest.fixture(scope='function')
+def employee(manager):
+    birth_date = datetime.strptime('1980-01-01', '%Y-%m-%d').date()
+    here_date = datetime.strptime('2020-01-01', '%Y-%m-%d').date()
+    manager.create_employee(123456, 'Doe', 'John', 'A.', birth_date, 'Some Address', 'Developer', 'IT', 'Active',
+                            here_date)
+    return manager
+
+
+def test_df_to_sql(session, manager):
+    df = pd.DataFrame({
+        'employee_number': [123456],
+        'last_name': ['Doe'],
+        'first_name': ['John'],
+        'middle_name': ['A.'],
+        'birth_date': ['1980-01-01'],
+        'address': ['Some Address'],
+        'position': ['Developer'],
+        'department': ['IT'],
+        'status': ['Active'],
+        'here_date': ['2020-01-01']
+    })
     manager.df_to_sql(df)
     result = session.query(Employee).first()
     assert result.employee_number == 123456
     assert result.first_name == 'John'
 
 
-def test_create_employee(session):
-    manager = EmployeeManager(session)
-    birth_date = datetime.strptime('1980-01-01', '%Y-%m-%d').date()
-    here_date = datetime.strptime('2020-01-01', '%Y-%m-%d').date()
-    manager.create_employee(123456, 'Doe', 'John', 'A.', birth_date, 'Some Address', 'Developer', 'IT', 'Active',
-                            here_date)
+def test_create_employee(session, employee):
     result = session.query(Employee).first()
     assert result.employee_number == 123456
     assert result.first_name == 'John'
 
 
-def test_get_all_employees(session):
-    manager = EmployeeManager(session)
-    birth_date = datetime.strptime('1980-01-01', '%Y-%m-%d').date()
-    here_date = datetime.strptime('2020-01-01', '%Y-%m-%d').date()
-    manager.create_employee(123456, 'Doe', 'John', 'A.', birth_date, 'Some Address', 'Developer', 'IT', 'Active',
-                            here_date)
-    employees = manager.get_all_employees()
+def test_get_all_employees(session, employee):
+    employees = employee.get_all_employees()
     assert len(employees) == 1
     assert employees[0].employee_number == 123456
 
 
-def test_delete_all_employees(session):
-    manager = EmployeeManager(session)
-    birth_date = datetime.strptime('1980-01-01', '%Y-%m-%d').date()
-    here_date = datetime.strptime('2020-01-01', '%Y-%m-%d').date()
-    manager.create_employee(123456, 'Doe', 'John', 'A.', birth_date, 'Some Address', 'Developer', 'IT', 'Active',
-                            here_date)
-    manager.delete_all_employees()
+def test_delete_all_employees(session, employee):
+    employee.delete_all_employees()
     result = session.query(Employee).all()
     assert len(result) == 0
+
+
+def test_checking_employee_in_db(employee):
+    result = employee.checking_employee_in_db(123456)
+    assert result is True
+    result = employee.checking_employee_in_db(1234567)
+    assert result is False
 
 
 def test_create_session():

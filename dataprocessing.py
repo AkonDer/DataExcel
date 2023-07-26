@@ -10,8 +10,25 @@ class DataProcessing:
     def __init__(self, session):
         self.session = session
 
-    # Метод для чтения данных из Excel файла и загрузки их в базу данных
+    def _parse_date(self, date_str):
+        """
+        Вспомогательный метод для преобразования строки даты в объект date.
+        """
+        try:
+            # Пытаемся преобразовать строку в дату
+            return datetime.strptime(date_str, '%d.%m.%Y').date()
+        except Exception as e:
+            # В случае ошибки выводим сообщение и пытаемся вернуть дату из объекта, если это возможно
+            print(f"Произошла следующая ошибка: {e}")
+            return date_str.date() if hasattr(date_str, 'date') else None
+
     def excel_to_db(self, filename, progress_callback):
+        """
+        Метод для чтения данных из Excel файла и загрузки их в базу данных
+        :param filename: Имя файла Excel
+        :param progress_callback: callback для обновления прогрессбара
+        :return:
+        """
         # Константы для обращения к колонкам в датафрейме pandas
         EMPLOYEE_NUMBER = 3
         BIRTH_DATE = 6
@@ -37,19 +54,9 @@ class DataProcessing:
             first_name = row[EMPLOYEE].split(' ')[1].strip()
             middle_name = row[EMPLOYEE].split(' ')[2].strip() if len(row['Сотрудник'].split(' ')) > 2 else np.nan
 
-            # Попытка преобразовать дату рождения из строки
-            try:
-                birth_date = datetime.strptime(row[BIRTH_DATE], '%d.%m.%Y').date()
-            except Exception as e:
-                print(f"Произошла следующая ошибка: {e}")
-                birth_date = row[BIRTH_DATE].date()
-
-            # Попытка преобразовать дату принятия на работу из строки
-            try:
-                here_date = datetime.strptime(row[HERE_DATE], '%d.%m.%Y').date()
-            except Exception as e:
-                print(f"Произошла следующая ошибка: {e}")
-                here_date = row[HERE_DATE].date()
+            # Преобразование строковых представлений дат в объекты date
+            birth_date = self._parse_date(row['Дата рождения'])
+            here_date = self._parse_date(row['Дата приема'])
 
             # Создание нового сотрудника в базе данных
             manager.create_employee(row[EMPLOYEE_NUMBER],

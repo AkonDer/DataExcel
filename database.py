@@ -11,12 +11,29 @@ class EmployeeManager:
         self.session = session  # SQLAlchemy session для выполнения операций с базой данных
 
     def df_to_sql(self, df):
-        # Записывает данные из pandas DataFrame в таблицу 'employees' в базе данных
+        """
+        Записывает данные из pandas DataFrame в таблицу 'employees' в базе данных
+        :param df: датафрейм pandas
+        :return:
+        """
         df.to_sql('employees', self.session.bind, index=False, if_exists='append')
 
     def create_employee(self, employee_number, last_name, first_name, middle_name, birth_date, address, position,
                         department, status, here_date):
-        # Создание нового работника и добавление его в базу данных
+        """
+        Создание нового работника и добавление его в базу данных
+        :param employee_number: табельный номер
+        :param last_name: фамилия
+        :param first_name: имя
+        :param middle_name: отчество
+        :param birth_date: дата рождения
+        :param address: адрес
+        :param position: должность
+        :param department: подразделение (отдел)
+        :param status: статус (штатный работник, уволенный, по договору подряда и т.д.
+        :param here_date: дата принятия на работу
+        :return:
+        """
         new_employee = Employee(employee_number=employee_number, last_name=last_name, first_name=first_name,
                                 middle_name=middle_name, birth_date=birth_date, address=address, position=position,
                                 department=department, status=status, here_date=here_date)
@@ -24,22 +41,45 @@ class EmployeeManager:
         self.session.commit()  # Фиксация изменений
 
     def get_all_employees(self):
-        # Возвращает все записи из таблицы 'employees' в виде списка объектов класса Employee
+        """
+        Возвращает все записи из таблицы 'employees' в виде списка объектов класса Employee
+        :return: все записи из таблицы 'employees' в виде списка объектов класса Employee
+        """
         employees = self.session.query(Employee).all()
         return employees
 
     def delete_all_employees(self):
-        # Удаляет все записи из таблицы 'employees'
+        """
+        Удаляет все записи из таблицы 'employees'
+        :return:
+        """
         self.session.query(Employee).delete()
         self.session.commit()  # Фиксация изменений
 
     def close_session(self):
-        # Закрывает сессию
+        """
+        Закрывает сессию
+        :return:
+        """
         self.session.close()
+
+    def checking_employee_in_db(self, employee_number) -> bool:
+        """
+        Проверяет, есть ли такой работников в базе данных по табельному номеру
+        :param employee_number: табельный номер работника
+        :return: True если такой работника есть в базе данных, иначе False
+        """
+        result = self.session.query(Employee).filter(Employee.employee_number == employee_number).first()
+        if result:
+            return True
+        return False
 
 
 def create_session():
-    # Создание новой сессии для работы с базой данных
+    """
+    Создание новой сессии для работы с базой данных
+    :return:
+    """
     engine = create_engine(DB_URL)
     Base.metadata.create_all(bind=engine)
     Session = sessionmaker(bind=engine)
