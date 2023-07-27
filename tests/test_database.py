@@ -7,7 +7,7 @@ from datetime import datetime
 
 sys.path.append('./')
 from models import Employee, Base
-from database import EmployeeManager, create_session
+from database import EmployeeManager, create_session, EmployeeHistory
 
 DB_URL = 'sqlite:///:memory:'
 
@@ -78,6 +78,23 @@ def test_checking_employee_in_db(employee):
     assert result is True
     result = employee.checking_employee_in_db(1234567)
     assert result is False
+
+
+def test_checking_employee_changes(session, employee):
+    # Убеждаемся, что в истории нет записей
+    assert session.query(EmployeeHistory).count() == 0
+
+    employee.checking_employee_changes(123456, "Smith")
+
+    # Проверяем, что в истории появилась новая запись
+    history_entry = session.query(EmployeeHistory).first()
+    assert history_entry is not None
+    assert history_entry.old_last_name == "Doe"
+
+    employee.checking_employee_changes(123456, "Smith")
+
+    # Убеждаемся, что в истории не появилось новых записей
+    assert session.query(EmployeeHistory).count() == 1
 
 
 def test_create_session():

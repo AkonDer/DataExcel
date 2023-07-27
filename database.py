@@ -1,7 +1,9 @@
 # Импорт необходимых библиотек
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import Employee, Base
+from models import Employee, Base, EmployeeHistory
+
+import unittest
 
 DB_URL = 'sqlite:///employees.db'  # URL для подключения к базе данных SQLite
 
@@ -73,6 +75,20 @@ class EmployeeManager:
         if result:
             return True
         return False
+
+    def checking_employee_changes(self, employee_number, last_name):
+        employee = self.session.query(Employee).filter(Employee.employee_number == employee_number).first()
+        old_last_name = None
+
+        # Проверяем, изменилось ли имя
+        if employee.last_name != last_name:
+            old_last_name = employee.last_name
+            employee.last_name = last_name
+
+            # Создаем запись в истории только если имя изменилось
+            employee_history = EmployeeHistory(old_last_name=old_last_name, employee=employee)
+            self.session.add(employee_history)
+            self.session.commit()
 
 
 def create_session():

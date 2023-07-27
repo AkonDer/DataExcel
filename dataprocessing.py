@@ -49,10 +49,18 @@ class DataProcessing:
 
         # Обход каждой строки в датафрейме
         for index, row in df.iterrows():
+
             # Разделение имени на фамилию, имя и отчество
             last_name = row[EMPLOYEE].split(' ')[0].strip()
             first_name = row[EMPLOYEE].split(' ')[1].strip()
             middle_name = row[EMPLOYEE].split(' ')[2].strip() if len(row['Сотрудник'].split(' ')) > 2 else np.nan
+
+            # Проверка на существование сотрудника в базе данных если сотрудник в бд имеется то пропускаем шаг
+            if manager.checking_employee_in_db(row[EMPLOYEE_NUMBER]):
+                manager.checking_employee_changes(row[EMPLOYEE_NUMBER], last_name)
+                progress = 100 if index == count_rows - 1 else int(index / count_rows * 100)
+                progress_callback(progress)
+                continue
 
             # Преобразование строковых представлений дат в объекты date
             birth_date = self._parse_date(row['Дата рождения'])
