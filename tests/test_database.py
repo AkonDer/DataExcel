@@ -67,6 +67,12 @@ def test_get_all_employees(session, employee):
     assert employees[0].employee_number == 123456
 
 
+def test_get_employees_with(employee):
+    employees = employee.get_employees_with('last_name', 'Doe')
+    assert len(employees) == 1
+    assert employees[0].employee_number == 123456
+
+
 def test_delete_all_employees(session, employee):
     employee.delete_all_employees()
     result = session.query(Employee).all()
@@ -103,6 +109,15 @@ def test_checking_employee_changes(session, employee):
 
     # Убеждаемся, что в истории не появилось новых записей
     assert session.query(EmployeeHistory).count() == 1
+
+
+def test_change_employee_status(session, employee):
+    employee.change_employee_status(123456, "Not active")
+    result = employee.get_all_employees()
+    assert result[0].status == "Not active"
+
+    history_entry = session.query(EmployeeHistory).first()
+    assert history_entry is not None
 
 
 def test_create_session():

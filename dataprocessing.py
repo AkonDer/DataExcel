@@ -47,13 +47,21 @@ class DataProcessing:
         # Получение количества строк в датафрейме
         count_rows = df.shape[0]
 
+        # сверка базы данных с информацией их файла excel, если в файле сотрудник отсутствует его статус в базе данных
+        # меняется на "уволен"
+        employees = manager.get_employees_with('status', 'staff member')
+        for employee in employees:
+            result = df[df['Табельный номер'] == employee.employee_number]
+            if result.empty:
+                manager.change_employee_status(employee.employee_number, "dismissed")
+
         # Обход каждой строки в датафрейме
         for index, row in df.iterrows():
 
             # Разделение имени на фамилию, имя и отчество
             last_name = row[EMPLOYEE].split(' ')[0].strip()
             first_name = row[EMPLOYEE].split(' ')[1].strip()
-            middle_name = row[EMPLOYEE].split(' ')[2].strip() if len(row['Сотрудник'].split(' ')) > 2 else np.nan
+            middle_name = row[EMPLOYEE].split(' ')[2].strip() if len(row['Сотрудник'].split(' ')) > 2 else None
 
             # Проверка на существование сотрудника в базе данных если сотрудник в бд имеется то пропускаем шаг
             if manager.checking_employee_in_db(row[EMPLOYEE_NUMBER]):
