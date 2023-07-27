@@ -56,6 +56,7 @@ class EmployeeManager:
         :return:
         """
         self.session.query(Employee).delete()
+        self.session.query(EmployeeHistory).delete()
         self.session.commit()  # Фиксация изменений
 
     def close_session(self):

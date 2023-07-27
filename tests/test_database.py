@@ -71,6 +71,8 @@ def test_delete_all_employees(session, employee):
     employee.delete_all_employees()
     result = session.query(Employee).all()
     assert len(result) == 0
+    result = session.query(EmployeeHistory).all()
+    assert len(result) == 0
 
 
 def test_checking_employee_in_db(employee):
