@@ -57,7 +57,8 @@ class DataProcessing:
 
             # Проверка на существование сотрудника в базе данных если сотрудник в бд имеется то пропускаем шаг
             if manager.checking_employee_in_db(row[EMPLOYEE_NUMBER]):
-                manager.checking_employee_changes(row[EMPLOYEE_NUMBER], last_name)
+                manager.checking_employee_changes(row[EMPLOYEE_NUMBER], last_name, row[POSITION], row[DEPORTMENT],
+                                                  row[ADDRESS], STATUS)
                 progress = 100 if index == count_rows - 1 else int(index / count_rows * 100)
                 progress_callback(progress)
                 continue

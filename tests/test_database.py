@@ -86,14 +86,20 @@ def test_checking_employee_changes(session, employee):
     # Убеждаемся, что в истории нет записей
     assert session.query(EmployeeHistory).count() == 0
 
-    employee.checking_employee_changes(123456, "Smith")
+    employee.checking_employee_changes(123456, "Smith", "Programmer", "Some department", "Some Address new",
+                                       "Not active")
 
     # Проверяем, что в истории появилась новая запись
     history_entry = session.query(EmployeeHistory).first()
     assert history_entry is not None
     assert history_entry.old_last_name == "Doe"
+    assert history_entry.old_position == "Developer"
+    assert history_entry.old_department == "IT"
+    assert history_entry.old_address == "Some Address"
+    assert history_entry.old_status == "Active"
 
-    employee.checking_employee_changes(123456, "Smith")
+    employee.checking_employee_changes(123456, "Smith", "Programmer", "Some department", "Some Address new",
+                                       "Not active")
 
     # Убеждаемся, что в истории не появилось новых записей
     assert session.query(EmployeeHistory).count() == 1

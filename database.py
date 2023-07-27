@@ -77,17 +77,41 @@ class EmployeeManager:
             return True
         return False
 
-    def checking_employee_changes(self, employee_number, last_name):
+    def checking_employee_changes(self, employee_number, last_name, position, department, address, status):
         employee = self.session.query(Employee).filter(Employee.employee_number == employee_number).first()
         old_last_name = None
+        old_position = None
+        old_department = None
+        old_address = None
+        old_status = None
 
-        # Проверяем, изменилось ли имя
-        if employee.last_name != last_name:
-            old_last_name = employee.last_name
-            employee.last_name = last_name
+        if employee.last_name != last_name or employee.position != position or employee.department != department \
+                or employee.address != address or employee.status != status:
 
-            # Создаем запись в истории только если имя изменилось
-            employee_history = EmployeeHistory(old_last_name=old_last_name, employee=employee)
+            # Проверяем изменения
+            if employee.last_name != last_name:
+                old_last_name = employee.last_name
+                employee.last_name = last_name
+
+            if employee.position != position:
+                old_position = employee.position
+                employee.position = position
+
+            if employee.department != department:
+                old_department = employee.department
+                employee.department = department
+
+            if employee.address != address:
+                old_address = employee.address
+                employee.address = address
+
+            if employee.status != status:
+                old_status = employee.status
+                employee.status = status
+
+            employee_history = EmployeeHistory(old_last_name=old_last_name, old_position=old_position,
+                                               old_department=old_department, old_address=old_address,
+                                               old_status=old_status, employee=employee)
             self.session.add(employee_history)
             self.session.commit()
 
